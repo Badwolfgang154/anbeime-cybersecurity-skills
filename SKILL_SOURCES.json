@@ -1,0 +1,16 @@
+{
+  "sources": {
+    "cyber-threat-spectrum-analysis/cyber-threat-spectrum-analysis": {
+      "upstream_source": "local-repository",
+      "discovered_at": "2026-10-16T14:30:00.000000",
+      "description": "Framework for classifying and analyzing the full spectrum of cybersecurity threats (virus, worm, trojan, ransomware, spyware, adware, rootkit, fileless, keylogger, botnet) with MITRE ATT&CK mapping, detection signatures, and mitigation guidance."
+    }
+  },
+  "metadata": {
+    "repository_name": "anbeime-cybersecurity-skills",
+    "description": "Cybersecurity threat spectrum analysis skill pack — classification, MITRE ATT&CK mapping, detection signatures, and mitigation for 10 malware families.",
+    "total_skills": 1,
+    "last_sync": "2026-10-16T14:30:00.000000",
+    "license": "CC-BY-4.0"
+  }
+}
