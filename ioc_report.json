@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-10-16T15:00:00Z",
+  "tool": "ioc_extractor",
+  "families": [
+    {
+      "family": "ransomware",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md",
+      "ioc_count": 9,
+      "iocs": [
+        {
+          "type": "event_id",
+          "value": "004",
+          "category": "event_id",
+          "source": "ransomware",
+          "description": "MATCH_PATTERN:event_id"
+        },
+        {
+          "type": "path",
+          "value": "/ECC",
+          "category": "file",
+          "source": "ransomware",
+          "description": "Caminho de arquivo/holder detectado na descrição"
+        },
+        {
+          "type": "path",
+          "value": "/text",
+          "category": "file",
+          "source": "ransomware",
+          "description": "Caminho de arquivo/holder detectado na descrição"
+        },
+        {
+          "type": "file",
+          "value": "New file extensions (.locked, .encrypted)",
+          "category": "file",
+          "description": "Novas extensões em arquivos (.locked, .encrypted, etc.)"
+        },
+        {
+          "type": "file",
+          "value": "Sudden mass renames",
+          "category": "file",
+          "description": "Renomeação em massa de arquivos"
+        },
+        {
+          "type": "process",
+          "value": "vssadmin delete shadows",
+          "category": "process",
+          "description": "Comando para excluir shadows"
+        },
+        {
+          "type": "process",
+          "value": "wbadmin delete",
+          "category": "process",
+          "description": "Comando para excluir backup"
+        },
+        {
+          "type": "file",
+          "value": "Ransom notes (.html or .txt)",
+          "category": "file",
+          "description": "Notas de resgate (.html ou .txt)"
+        },
+        {
+          "type": "network",
+          "value": "Pre-encryption data exfiltration",
+          "category": "network",
+          "description": "Exfiltração de dados antes da criptografia (double extortion)"
+        }
+      ]
+    }
+  ]
+}

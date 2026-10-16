@@ -1,0 +1,9 @@
+ransomware|event_id|event_id|004|MATCH_PATTERN:event_id|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|file|path|/ECC|Caminho de arquivo/holder detectado na descrição|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|file|path|/text|Caminho de arquivo/holder detectado na descrição|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|file|file|New file extensions (.locked, .encrypted)|Novas extensões em arquivos (.locked, .encrypted, etc.)|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|file|file|Sudden mass renames|Renomeação em massa de arquivos|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|process|process|vssadmin delete shadows|Comando para excluir shadows|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|process|process|wbadmin delete|Comando para excluir backup|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|file|file|Ransom notes (.html or .txt)|Notas de resgate (.html ou .txt)|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md
+ransomware|network|network|Pre-encryption data exfiltration|Exfiltração de dados antes da criptografia (double extortion)|skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md

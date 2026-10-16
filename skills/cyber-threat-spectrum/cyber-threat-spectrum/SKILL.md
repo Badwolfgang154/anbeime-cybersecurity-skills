@@ -80,6 +80,7 @@ Each family has a dedicated reference document:
 | Fileless | `references/fileless.md` |
 | Keylogger | `references/keylogger.md` |
 | Botnet | `references/botnet.md` |
+| SIEM/EDR | `docs/SIEM_EDR_Integration_Guide.md` |
 
 ## Report Template
 
