@@ -1,0 +1,204 @@
+{
+  "description": "Amostras sintéticas controladas para testes do Anbeime IOC Extractor",
+  "notes": "Todos os valores abaixo são SAMPLEs de teste sintéticos. Não correspondem a arquivos maliciosos reais. A validade sintática NÃO implica malicia.",
+  "samples": [
+    {
+      "id": "SYN-001",
+      "type": "ipv4",
+      "value": "192.0.2.10",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "IPv4 de documentação (TESTE)"
+    },
+    {
+      "id": "SYN-002",
+      "type": "ipv6",
+      "value": "2001:db8::10",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "IPv6 de documentação (TESTE)"
+    },
+    {
+      "id": "SYN-003",
+      "type": "domain",
+      "value": "example.com",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Domínio reservado para documentação (TESTE)"
+    },
+    {
+      "id": "SYN-004",
+      "type": "url",
+      "value": "https://example.com/test-path",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "URL sintética usando domínio de documentação (TESTE)"
+    },
+    {
+      "id": "SYN-005",
+      "type": "md5",
+      "value": "d41d8cd98f00b204e9800998ecf8427f",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Hash MD5 sintético de 32 caracteres (TESTE)"
+    },
+    {
+      "id": "SYN-006",
+      "type": "sha1",
+      "value": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Hash SHA-1 sintético de 40 caracteres (TESTE)"
+    },
+    {
+      "id": "SYN-007",
+      "type": "sha256",
+      "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Hash SHA-256 sintético de 64 caracteres (TESTE)"
+    },
+    {
+      "id": "SYN-008",
+      "type": "windows_path",
+      "value": "C:\\Windows\\System32\\config.ini",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Caminho Windows sintético (TESTE)"
+    },
+    {
+      "id": "SYN-009",
+      "type": "unix_path",
+      "value": "/usr/local/bin/script.sh",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Caminho Unix sintético (TESTE)"
+    },
+    {
+      "id": "SYN-010",
+      "type": "windows_path",
+      "value": "C:/Users/usuario/Documents/report.pdf",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Outro caminho Windows sintético (TESTE)"
+    },
+    {
+      "id": "SYN-011",
+      "type": "unix_path",
+      "value": "relative/path/to/file.txt",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Caminho Unix relativo sintético (TESTE)"
+    },
+    {
+      "id": "SYN-012",
+      "type": "registry",
+      "value": "HKLM\\Software\\Example\\Test",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Chave de registro sintética (TESTE)"
+    },
+    {
+      "id": "SYN-013",
+      "type": "event_id",
+      "value": "4104",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Event ID 4104 (TESTE) - evidência de log, não IOC"
+    },
+    {
+      "id": "SYN-100",
+      "type": "domain",
+      "value": "explorer.exe",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "Executável que NÃO deve ser classificado como domínio (TESTE)"
+    },
+    {
+      "id": "SYN-101",
+      "type": "domain",
+      "value": "svchost.exe",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "Outro executável que NÃO deve ser classificado como domínio (TESTE)"
+    },
+    {
+      "id": "SYN-102",
+      "type": "ipv4",
+      "value": "999.999.999.999",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "IP malformado que NÃO deve ser aceito (TESTE)"
+    },
+    {
+      "id": "SYN-103",
+      "type": "md5",
+      "value": "d41d8cd98f00b204e9800998ecf8427",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "Hash MD5 com 31 caracteres (INVALIDO) (TESTE)"
+    },
+    {
+      "id": "SYN-104",
+      "type": "url",
+      "value": "example.com/test",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "URL sem esquema (TESTE)"
+    },
+    {
+      "id": "SYN-105",
+      "type": "windows_path",
+      "value": "/GPU",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "Fragmento de texto que NÃO deve ser tratado como caminho (TESTE)"
+    },
+    {
+      "id": "SYN-106",
+      "type": "windows_path",
+      "value": "/Windows",
+      "syntactic_valid": false,
+      "expected_category": "reject",
+      "source": "synthetic",
+      "description": "Outro fragmento que NÃO deve ser tratado como caminho (TESTE)"
+    },
+    {
+      "id": "SYN-200",
+      "type": "event_id",
+      "value": "4104",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Event ID 4104 com contexto - evidência, não IOC (TESTE)"
+    },
+    {
+      "id": "SYN-201",
+      "type": "registry",
+      "value": "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "syntactic_valid": true,
+      "expected_category": "evidence",
+      "source": "synthetic",
+      "description": "Chave genérica de registro - evidência, não IOC (TESTE)"
+    }
+  ]
+}

@@ -1,68 +1,391 @@
 {
-  "generated_at": "2026-10-16T15:00:00Z",
+  "generated_at": "2026-10-17T18:33:33Z",
   "tool": "ioc_extractor",
+  "schema_version": "2.0.0",
+  "summary": {
+    "families_analyzed": 10,
+    "total_iocs": 0,
+    "total_behaviors": 26,
+    "total_evidence": 10,
+    "total_observations": 36
+  },
   "families": [
+    {
+      "family": "adware",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/adware.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 1,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Unwanted pop-ups",
+          "category": "behavior",
+          "source": "adware",
+          "description": "Pop-ups indesejados"
+        },
+        {
+          "type": "behavior",
+          "value": "CPU mining behavior",
+          "category": "behavior",
+          "source": "adware",
+          "description": "Comportamento de mineração de CPU/GPU"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "evidence",
+          "value": "Browser homepage reset without user action",
+          "category": "evidence",
+          "source": "adware",
+          "description": "Homepage do navegador reiniciada sem ação do usuário"
+        }
+      ]
+    },
+    {
+      "family": "botnet",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/botnet.md",
+      "ioc_count": 0,
+      "behavior_count": 4,
+      "evidence_count": 0,
+      "total_observations": 4,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Beaconing patterns — periodic, low-frequency outbound",
+          "category": "behavior",
+          "source": "botnet",
+          "description": "Padrões de beaconing — saída periódica, baixa frequência"
+        },
+        {
+          "type": "behavior",
+          "value": "DNS tunneling",
+          "category": "behavior",
+          "source": "botnet",
+          "description": "DNS tunneling"
+        },
+        {
+          "type": "behavior",
+          "value": "IRC/P2P-like traffic",
+          "category": "behavior",
+          "source": "botnet",
+          "description": "Tráfego IRC/P2P"
+        },
+        {
+          "type": "behavior",
+          "value": "High child-process count; processes spawning multiple shell instances",
+          "category": "behavior",
+          "source": "botnet",
+          "description": "Alta contagem de processos filhos; processos espawning múltiplas instâncias de shell"
+        }
+      ],
+      "evidence": []
+    },
+    {
+      "family": "fileless",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/fileless.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 2,
+      "total_observations": 4,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "PowerShell/WMI child processes with encoded content",
+          "category": "behavior",
+          "source": "fileless",
+          "description": "Processos filho PowerShell/WMI com conteúdo codificado"
+        },
+        {
+          "type": "behavior",
+          "value": "Outbound connections during script execution",
+          "category": "behavior",
+          "source": "fileless",
+          "description": "Conexões de saída durante execução de scripts"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "event_id",
+          "value": "4104",
+          "category": "log",
+          "source": "fileless",
+          "description": "Evento detectado no log: 4104 (observação de detecção, não IOC malicioso)"
+        },
+        {
+          "type": "command",
+          "value": "PowerShell script block logging (4104)",
+          "category": "command",
+          "source": "fileless",
+          "description": "Script block logging do PowerShell habilitado (configuração de monitoramento, não IOC malicioso)"
+        }
+      ]
+    },
+    {
+      "family": "keylogger",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/keylogger.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 1,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Low-level keyboard hooks",
+          "category": "behavior",
+          "source": "keylogger",
+          "description": "Hook de teclado de baixo nível"
+        },
+        {
+          "type": "behavior",
+          "value": "Keystroke data exfiltrating to external destination",
+          "category": "behavior",
+          "source": "keylogger",
+          "description": "Dados de digitação sendo exfiltrados para um destino externo"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "evidence",
+          "value": "Clipboard content captured",
+          "category": "evidence",
+          "source": "keylogger",
+          "description": "Conteúdo de clipboard capturado"
+        }
+      ]
+    },
     {
       "family": "ransomware",
       "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/ransomware.md",
-      "ioc_count": 9,
-      "iocs": [
+      "ioc_count": 0,
+      "behavior_count": 6,
+      "evidence_count": 0,
+      "total_observations": 6,
+      "iocs": [],
+      "behaviors": [
         {
-          "type": "event_id",
-          "value": "004",
-          "category": "event_id",
-          "source": "ransomware",
-          "description": "MATCH_PATTERN:event_id"
-        },
-        {
-          "type": "path",
-          "value": "/ECC",
-          "category": "file",
-          "source": "ransomware",
-          "description": "Caminho de arquivo/holder detectado na descrição"
-        },
-        {
-          "type": "path",
-          "value": "/text",
-          "category": "file",
-          "source": "ransomware",
-          "description": "Caminho de arquivo/holder detectado na descrição"
-        },
-        {
-          "type": "file",
-          "value": "New file extensions (.locked, .encrypted)",
-          "category": "file",
-          "description": "Novas extensões em arquivos (.locked, .encrypted, etc.)"
-        },
-        {
-          "type": "file",
-          "value": "Sudden mass renames",
-          "category": "file",
-          "description": "Renomeação em massa de arquivos"
-        },
-        {
-          "type": "process",
+          "type": "behavior",
           "value": "vssadmin delete shadows",
-          "category": "process",
+          "category": "behavior",
+          "source": "ransomware",
           "description": "Comando para excluir shadows"
         },
         {
-          "type": "process",
+          "type": "behavior",
           "value": "wbadmin delete",
-          "category": "process",
+          "category": "behavior",
+          "source": "ransomware",
           "description": "Comando para excluir backup"
         },
         {
-          "type": "file",
-          "value": "Ransom notes (.html or .txt)",
-          "category": "file",
-          "description": "Notas de resgate (.html ou .txt)"
+          "type": "behavior",
+          "value": "Pre-encryption data exfiltration",
+          "category": "behavior",
+          "source": "ransomware",
+          "description": "Exfiltração de dados antes da criptografia (double extortion)"
         },
         {
-          "type": "network",
-          "value": "Pre-encryption data exfiltration",
-          "category": "network",
-          "description": "Exfiltração de dados antes da criptografia (double extortion)"
+          "type": "behavior",
+          "value": "Sudden mass renames",
+          "category": "behavior",
+          "source": "ransomware",
+          "description": "Renomeação em massa de arquivos"
+        },
+        {
+          "type": "behavior",
+          "value": "New file extensions (.locked, .encrypted)",
+          "category": "behavior",
+          "source": "ransomware",
+          "description": "Padrão de extensões: novos arquivos adquiriram extensões .locked/.encrypted"
+        },
+        {
+          "type": "behavior",
+          "value": "Ransom notes (.html or .txt)",
+          "category": "behavior",
+          "source": "ransomware",
+          "description": "Padrão de notas de resgate criadas no host"
+        }
+      ],
+      "evidence": []
+    },
+    {
+      "family": "rootkit",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/rootkit.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 1,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Processes not visible in Task Manager but consuming resources",
+          "category": "behavior",
+          "source": "rootkit",
+          "description": "Processos invisíveis no Gerenciador de Tarefas consumindo recursos"
+        },
+        {
+          "type": "behavior",
+          "value": "Connections not visible in netstat",
+          "category": "behavior",
+          "source": "rootkit",
+          "description": "Conexões invisíveis no netstat"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "evidence",
+          "value": "Files inaccessible via File Explorer but exist on disk",
+          "category": "evidence",
+          "source": "rootkit",
+          "description": "Arquivos inacessíveis via Explorer mas presentes no disco"
+        }
+      ]
+    },
+    {
+      "family": "spyware",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/spyware.md",
+      "ioc_count": 0,
+      "behavior_count": 3,
+      "evidence_count": 0,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Unknown processes reading clipboard/documents",
+          "category": "behavior",
+          "source": "spyware",
+          "description": "Processos desconhecidos lendo clipboard e documentos"
+        },
+        {
+          "type": "behavior",
+          "value": "Unusual outbound data transfers to single destination",
+          "category": "behavior",
+          "source": "spyware",
+          "description": "Transferências de dados de saída anormais para um destino único"
+        },
+        {
+          "type": "behavior",
+          "value": "Browser extensions from unknown publishers",
+          "category": "behavior",
+          "source": "spyware",
+          "description": "Padrão: extensões de navegador de editores desconhecidos"
+        }
+      ],
+      "evidence": []
+    },
+    {
+      "family": "trojan-rat",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/trojan-rat.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 1,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Unexpected child processes with unknown certs",
+          "category": "behavior",
+          "source": "trojan-rat",
+          "description": "Processos filhos inesperados com certificados desconhecidos"
+        },
+        {
+          "type": "behavior",
+          "value": "Persistent low-volume outbound to unknown IPs/domains",
+          "category": "behavior",
+          "source": "trojan-rat",
+          "description": "Conexões persistentes de baixo volume para IPs/domains desconhecidos"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "registry",
+          "value": "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "category": "registry",
+          "source": "trojan-rat",
+          "description": "Chave de persistência legítima do Windows — observação, não IOC malicioso sem valor suspeito associado"
+        }
+      ]
+    },
+    {
+      "family": "virus",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/virus.md",
+      "ioc_count": 0,
+      "behavior_count": 1,
+      "evidence_count": 2,
+      "total_observations": 3,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Unexpected child process after host exit",
+          "category": "behavior",
+          "source": "virus",
+          "description": "Processo filho inesperado após execução do hospedeiro"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "registry",
+          "value": "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "category": "registry",
+          "source": "virus",
+          "description": "Chave de persistência legítima do Windows — observação, não IOC malicioso sem valor suspeito associado"
+        },
+        {
+          "type": "evidence",
+          "value": "PE header anomalies",
+          "category": "evidence",
+          "source": "virus",
+          "description": "Anomalias no cabeçalho PE de arquivos executáveis"
+        }
+      ]
+    },
+    {
+      "family": "worm",
+      "reference": "skills/cyber-threat-spectrum/cyber-threat-spectrum/references/worm.md",
+      "ioc_count": 0,
+      "behavior_count": 2,
+      "evidence_count": 2,
+      "total_observations": 4,
+      "iocs": [],
+      "behaviors": [
+        {
+          "type": "behavior",
+          "value": "Unusual child processes scanning ports",
+          "category": "behavior",
+          "source": "worm",
+          "description": "Processos filhos inusualmente varredores de ports"
+        },
+        {
+          "type": "behavior",
+          "value": "High volume of outbound scans to multiple hosts",
+          "category": "behavior",
+          "source": "worm",
+          "description": "Alta volume de varreduras de saída para múltiplos hosts"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "evidence",
+          "value": "Mass file creation in temp/system dirs",
+          "category": "evidence",
+          "source": "worm",
+          "description": "Criação em massa de arquivos em diretórios temporários/sistema"
+        },
+        {
+          "type": "registry",
+          "value": "HKLM\\System\\CurrentControlSet\\Services\\smss",
+          "category": "registry",
+          "source": "worm",
+          "description": "Artefato do sistema: serviço smss do Windows (não é IOC malicioso)"
         }
       ]
     }
