@@ -20,7 +20,7 @@ O Anbeime — Cybersecurity Skills é um projeto de cibersegurança desenvolvido
 
 O objetivo é automatizar parte do trabalho de identificação, validação e organização de indicadores, tornando os dados mais estruturados e facilitando seu uso em investigações de segurança.
 
-🔍 Como funciona?
+Como funciona?
 
 O projeto combina referências documentadas sobre famílias de ameaças com recursos de processamento de IOCs.
 
@@ -31,7 +31,7 @@ O projeto combina referências documentadas sobre famílias de ameaças com recu
 - Deduplicação: consolida indicadores repetidos e combina metadados relevantes.
 - Relatórios JSON: organiza os resultados em dados estruturados, incluindo estatísticas e informações sobre as famílias analisadas.
 
-🧩 O que são IOCs?
+O que são IOCs?
 
 Indicadores de comprometimento são artefatos ou valores que podem ajudar a investigar atividades potencialmente maliciosas.
 
@@ -44,7 +44,7 @@ Exemplos incluem:
 
 Um indicador isolado não confirma necessariamente um comprometimento. Os resultados precisam ser interpretados considerando o contexto, a origem e as demais evidências disponíveis.
 
-🎯 Aplicação em cibersegurança
+Aplicação em cibersegurança
 
 O Anbeime foi pensado como um projeto de aprendizado e automação aplicável a conceitos de Blue Team, SOC e Threat Intelligence.
 
@@ -59,7 +59,7 @@ Seu desenvolvimento envolve práticas como:
 
 O projeto não é um SIEM completo nem determina, sozinho, se um sistema foi comprometido. Sua finalidade é ajudar a preparar e organizar informações que possam apoiar análises defensivas.
 
-🚧 Estado do desenvolvimento
+Estado do desenvolvimento
 
 O projeto já conta com um extrator de IOCs, validadores, geração de relatórios e um cliente para a API comunitária da ThreatFox, acompanhado de testes automatizados.
 
