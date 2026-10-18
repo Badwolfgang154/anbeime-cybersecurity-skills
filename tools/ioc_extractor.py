@@ -225,7 +225,7 @@ def register_patterns():
     pats["hash"] = re.compile(r"\b([a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})\b")
     pats["ipv4"] = re.compile(r"\b((?:[0-9]{1,3}\.){3}[0-9]{1,3})\b")
     pats["ipv6"] = re.compile(r"\b([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b|\[?([A-Fa-f0-9:]+)\]")
-    pats["domain"] = re.compile(r"\b([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b")
+    pats["domain"] = re.compile(r"\b((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,})\b")
     pats["url"] = re.compile(r"\b(https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(/[^\s]*)?\b")
     pats["path"] = re.compile(r"(?<![a-zA-Z]):([\\/][^\s<>:\"|?*]*)")
     pats["registry"] = re.compile(r"HKLM|HKCU|HKCR|HKEY_[A-Z]+")

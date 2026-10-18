@@ -14,6 +14,7 @@ from ioc_extractor import (
     is_valid_domain, is_valid_path, is_valid_registry,
     is_valid_ip, is_valid_hash, is_valid_url, is_valid_event_id
 )
+import ioc_extractor
 
 # Caminho relativo ao projeto
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -213,6 +214,112 @@ class TestValidationFunctions:
         ]
         for domain in invalid_domains:
             assert not is_valid_domain(domain), f"Dominio inválido aceito: {domain}"
+
+
+    def test_domain_regex_group1_full_domain(self):
+        """Verifica que match.group(1) contém o domínio completo, não apenas o prefixo."""
+
+        # Simula o comportamento de extract_iocs_from_ref usando o padrão
+        pattern = ioc_extractor.PATTERNS["domain"]
+
+        # Caso do bug reportado: malware-example.test
+        text = "Indicador observado: malware-example.test"
+        matches = list(pattern.finditer(text))
+        assert len(matches) == 1
+
+        match = matches[0]
+        # group(0) e group(1) devem ser iguais (domínio completo)
+        assert match.group(1) == "malware-example.test"
+        assert match.group(1) == match.group(0)
+
+    def test_domain_regex_example_com(self):
+        """Verifica que example.com é extraído corretamente."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        text = "Site: example.com"
+        matches = list(pattern.finditer(text))
+        assert len(matches) == 1
+        assert matches[0].group(1) == "example.com"
+
+    def test_domain_regex_sub_domain(self):
+        """Verifica que subdominios complexos são extraídos corretamente."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        text = "Versão: dev.sub.example.co.uk"
+        matches = list(pattern.finditer(text))
+        assert len(matches) == 1
+        # O domínio completo deve ser extraído, incluindo todos os níveis
+        assert matches[0].group(1) == "dev.sub.example.co.uk"
+
+    def test_domain_regex_multilevel(self):
+        """Verifica domínios multi-níveis."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        text = "host.a.b.c.example.com"
+        matches = list(pattern.finditer(text))
+        assert len(matches) == 1
+        # O domínio completo deve ser extraído, incluindo todos os níveis
+        assert matches[0].group(1) == "host.a.b.c.example.com"
+
+    def test_domain_regex_invalid_returns_no_match(self):
+        """Verifica que entradas inválidas não geram match como IOC válido."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        # .exe não é um domínio válido, mas a regex pode capturá-lo
+        text = "arquivo.exe"
+        matches = list(pattern.finditer(text))
+        # A regex pode capturar arquivo.exe (é um domínio com TLD .exe)
+        # Mas é rejeitado pelo is_valid_domain() por causa da extensão executável
+        assert len(matches) == 1
+        # Verificar que é rejeitado pelo validador de domínios
+        assert not ioc_extractor.is_valid_domain(matches[0].group(1))
+
+    def test_domain_regex_no_fragments(self):
+        """Verifica que fragments de texto não são capturados como domínios."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        text = "Indicador: /GPU"
+        matches = list(pattern.finditer(text))
+        # O /GPU pode gerar match se for um domínio (com TLD inválida), mas deve ser rejeitado
+        # Por agora, verificamos que não é um domínio válido
+        assert not ioc_extractor.is_valid_domain('/GPU')
+
+
+
+    def test_extract_domain_from_text(self):
+        """Verifica que extract_iocs_from_ref extrai o domínio completo."""
+        # Test using the internal extraction logic
+        text = "Indicador observado: malware-example.test e outro.example.org"
+        pattern = ioc_extractor.PATTERNS["domain"]
+        matches = list(pattern.finditer(text))
+        assert len(matches) == 2
+
+        values = sorted([m.group(1) for m in matches])
+        assert "malware-example.test" in values
+        assert "outro.example.org" in values
+
+    def test_domain_regex_preserves_tld(self):
+        """Verifica que a TLD é incluída no grupo 1."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        test_cases = [
+            ("example.com", "example.com"),
+            ("sub.example.org", "sub.example.org"),
+            ("xn--example.com", "xn--example.com"),
+            ("123.example.com", "123.example.com"),
+        ]
+        for input_val, expected in test_cases:
+            matches = list(pattern.finditer(input_val + " "))
+            assert len(matches) == 1
+            assert matches[0].group(1) == expected
+
+    def test_domain_regex_does_not_capture_executable(self):
+        """Verifica que nomes de executáveis não são capturados como domínios válidos."""
+        pattern = ioc_extractor.PATTERNS["domain"]
+        text = "executável: explorer.exe e svchost.exe"
+        matches = list(pattern.finditer(text))
+        # A regex pode capturar .exe (é um TLD válido)
+        # Mas o extractor deve rejeitar por causa da extensão executável
+        for m in matches:
+            # O valor é capturado pela regex, mas rejeitado por is_valid_domain
+            assert not ioc_extractor.is_valid_domain(m.group(1))
+            # E deve terminar com extensões executáveis
+            assert m.group(1).endswith(('.exe', '.dll', '.cmd', '.bat'))
+
 
     def test_is_valid_path_positive(self):
         """Verifica que caminhos válidos são aceitos."""
