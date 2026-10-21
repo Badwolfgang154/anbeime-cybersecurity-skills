@@ -74,10 +74,9 @@ anbeime-cybersecurity-skills/
 ├── README.md
 ├── API_INTEGRATION.md
 ├── CONTRIBUTING.md
-├── DEMO-SUCCESS.md
-├── DEPLOYMENT.md
-├── DEPLOYMENT_CHECKLIST.md
-├── DEPLOYMENT_GUIDE.md
+├── examples/
+│   ├── ioc_report.json
+│   └── ioc_report_splunk
 ├── docs/
 │   ├── best-practices.md
 │   ├── quickstart.md

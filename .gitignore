@@ -10,5 +10,18 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Projeto Anbeime
+# Logs
 *.log
+
+# Ambiente e chaves de API
+.env
+.env.*
+*.env
+*.key
+*.pem
+SKILL_STORE_API_KEY
+THREATFOX_AUTH_KEY
+
+# Relatórios gerados na raiz (não em examples/)
+/ioc_report.json
+/ioc_report_splunk
