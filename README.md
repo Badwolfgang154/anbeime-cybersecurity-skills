@@ -1,7 +1,7 @@
 # 🎯 Cyber Threat Spectrum Skills
 
-[![Stars](https://img.shields.io/github/stars/anbeime-cybersecurity-skills?style=social)](https://github.com/anbeime-cybersecurity-skills)
-[![Forks](https://img.shields.io/github/forks/anbeime-cybersecurity-skills?style=social)](https://github.com/anbeime-cybersecurity-skills/network/members)
+[![Stars](https://img.shields.io/github/stars/Badwolfgang154/anbeime-cybersecurity-skills?style=social)](https://github.com/Badwolfgang154/anbeime-cybersecurity-skills)
+[![Forks](https://img.shields.io/github/forks/Badwolfgang154/anbeime-cybersecurity-skills?style=social)](https://github.com/Badwolfgang154/anbeime-cybersecurity-skills/network/members)
 [![License](https://img.shields.io/badge/license-CC--BY--4.0-blue)](https://creativecommons.org/licenses/by/4.0/)
 
 Pacote de habilidades de segurança cibernética para análise e classificação do espectro completo de ameaças.
@@ -9,8 +9,8 @@ Pacote de habilidades de segurança cibernética para análise e classificação
 ## 📊 Estatísticas
 
 - **Habilidades oficiais**: 1 (cyber-threat-spectrum-analysis)
-- **Families cobertas**: 10 (Vírus, Verme, Trojan/RAT, Ransomware, Spyware, Adware, Rootkit, Fileless, Keylogger, Botnet)
-- **MITRE ATT&CK mapped**: 30+ técnicas
+- **Famílias cobertas**: 10 (Vírus, Verme, Trojan/RAT, Ransomware, Spyware, Adware, Rootkit, Fileless, Keylogger, Botnet)
+- **MITRE ATT&CK mapeado**: 30+ técnicas
 - **Guias de detecção**: 1 por família
 - **Licença**: CC-BY-4.0
 
@@ -71,32 +71,52 @@ O desenvolvimento é incremental: novas funcionalidades devem ser acompanhadas d
 
 ```
 anbeime-cybersecurity-skills/
+├── README.md
+├── API_INTEGRATION.md
+├── CONTRIBUTING.md
+├── DEMO-SUCCESS.md
+├── DEPLOYMENT.md
+├── DEPLOYMENT_CHECKLIST.md
+├── DEPLOYMENT_GUIDE.md
+├── docs/
+│   ├── best-practices.md
+│   ├── quickstart.md
+│   ├── SIEM_EDR_Integration_Guide.md
+│   ├── specification.md
+│   └── threatfox-integration.md
+├── hands-on/
+│   └── hands-on-guide.md
 ├── skills/
 │   └── cyber-threat-spectrum/
 │       └── cyber-threat-spectrum/
 │           ├── SKILL.md
 │           ├── references/
-│           │   ├── virus.md
-│           │   ├── worm.md
-│           │   ├── trojan-rat.md
-│           │   ├── ransomware.md
-│           │   ├── spyware.md
 │           │   ├── adware.md
-│           │   ├── rootkit.md
+│           │   ├── botnet.md
 │           │   ├── fileless.md
 │           │   ├── keylogger.md
-│           │   └── botnet.md
+│           │   ├── ransomware.md
+│           │   ├── report-template.md
+│           │   ├── rootkit.md
+│           │   ├── spyware.md
+│           │   ├── trojan-rat.md
+│           │   ├── virus.md
+│           │   └── worm.md
 │           └── assets/
-└── docs/
-    ├── specification.md
-    ├── best-practices.md
-    └── quickstart.md
+├── tests/
+│   ├── fixtures/
+│   │   └── synthetic_iocs.json
+│   ├── test_ioc_extractor.py
+│   └── test_threatfox_client.py
+├── tools/
+│   ├── ioc_extractor.py
+│   ├── skill_validator.py
+│   └── threatfox_client.py
 ```
-
 ## 🚀 Instalação Rápida
 
 ```bash
-git clone https://github.com/anbeime-cybersecurity-skills.git
+git clone https://github.com/Badwolfgang154/anbeime-cybersecurity-skills.git
 cd anbeime-cybersecurity-skills/skills/cyber-threat-spectrum/cyber-threat-spectrum
 # Leia SKILL.md para começar
 ```
