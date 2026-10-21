@@ -131,11 +131,20 @@ cd anbeime-cybersecurity-skills/skills/cyber-threat-spectrum/cyber-threat-spectr
 
 ### Ferramentas (`tools/`)
 ```bash
-# Extrai IOCs de todas as famílias (salva ioc_report.json)
-python3 tools/ioc_extractor.py
+# Extrai IOCs de todas as famílias; salva ioc_report.json + ioc_report_splunk
+python3 tools/ioc_extractor.py --format all --output-dir ./relatorios
 
 # Extrai apenas uma família (ex.: ransomware)
 python3 tools/ioc_extractor.py --family ransomware
+
+# Output padrão: apenas o JSON
+python3 tools/ioc_extractor.py
+
+# Apenas o arquivo de Splunk
+python3 tools/ioc_extractor.py --format splunk
+
+# Diretório de saída opcional (padrão: diretório atual)
+python3 tools/ioc_extractor.py --output-dir ./relatorios
 
 # Valida a estrutura das skills (requer PyYAML)
 python3 tools/skill_validator.py --validate

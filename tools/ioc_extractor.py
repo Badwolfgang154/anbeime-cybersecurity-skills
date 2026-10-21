@@ -569,22 +569,29 @@ def main():
     parser.add_argument("--family", "-f", help="Extrair apenas uma família (ex: ransomware)")
     parser.add_argument("--format", "-o", choices=["json", "splunk", "all"], default="json", help="Formato de saída")
     parser.add_argument("--all", "-a", action="store_true", help="Extrair todas as famílias (padrão)")
+    parser.add_argument(
+        "--output-dir", "-O", default=None, help="Diretório de saída para os relatórios (padrão: diretório atual)"
+    )
     args = parser.parse_args()
 
     report = build_ioc_report(args.family if args.family else None)
 
+    output_dir = Path(args.output_dir) if args.output_dir else Path.cwd()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     if args.format in ("json", "all"):
+        out_path = output_dir / "ioc_report.json"
+        out_path.write_text(format_json(report), encoding="utf-8")
         print("=== JSON ===")
         print(format_json(report))
+        print(f"\nArquivo salvo: {out_path}")
 
     if args.format in ("splunk", "all"):
+        out_path = output_dir / "ioc_report_splunk"
+        out_path.write_text(format_splunk(report), encoding="utf-8")
         print("\n=== SPLUNK (CSV-style) ===")
         print(format_splunk(report))
-
-    out_name = "ioc_report_splunk" if args.format == "splunk" else "ioc_report.json"
-    with open(out_name, "w", encoding="utf-8") as f:
-        f.write(format_splunk(report) if args.format == "splunk" else format_json(report))
-    print(f"\nArquivo salvo: {out_name}")
+        print(f"\nArquivo salvo: {out_path}")
 
 
 if __name__ == "__main__":

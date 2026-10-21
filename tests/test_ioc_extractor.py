@@ -3,6 +3,9 @@ import os
 import re
 import subprocess
 import sys
+
+import pytest
+
 from datetime import datetime, timezone
 from collections import Counter
 
@@ -11,6 +14,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 
 # Import validation functions from the extractor
 from ioc_extractor import (
+    format_json,
+    format_splunk,
     is_valid_domain, is_valid_path, is_valid_registry,
     is_valid_ip, is_valid_hash, is_valid_url, is_valid_event_id
 )
@@ -18,8 +23,26 @@ import ioc_extractor
 
 # Caminho relativo ao projeto
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPORT_PATH = os.path.join(PROJECT_DIR, "ioc_report.json")
-SPLUNK_PATH = os.path.join(PROJECT_DIR, "ioc_report_splunk")
+
+# Sobrepostos pela fixture `_report_paths` (autouse, scope=session): apontam
+# para os relatórios gerados em diretório temporário do conftest.
+REPORT_PATH = None
+SPLUNK_PATH = None
+CURRENT_REPORT_PATHS = None
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _report_paths(ioc_report):
+    """Garante que todos os testes lêem os relatórios do diretório temporário."""
+    global REPORT_PATH, SPLUNK_PATH, CURRENT_REPORT_PATHS
+    REPORT_PATH = ioc_report["report_path"]
+    SPLUNK_PATH = ioc_report["splunk_path"]
+    CURRENT_REPORT_PATHS = {
+        "project_dir": ioc_report["project_dir"],
+        "report_path": ioc_report["report_path"],
+        "splunk_path": ioc_report["splunk_path"],
+    }
+    return CURRENT_REPORT_PATHS
 
 
 def load_report():
@@ -33,6 +56,58 @@ def load_json_file(filename):
     path = os.path.join(PROJECT_DIR, filename)
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def _load_synthetic_iocs(project_dir):
+    """Carrega as amostras sintéticas do projeto."""
+    fixture_path = os.path.join(project_dir, "tests", "fixtures", "synthetic_iocs.json")
+    with open(fixture_path, encoding="utf-8") as fh:
+        data = json.load(fh)
+    return data["samples"]
+
+
+def _valid_synthetic_iocs(project_dir):
+    """Retorna apenas os IOCs sintaticamente válidos do fixture."""
+    return [s for s in _load_synthetic_iocs(project_dir) if s.get("syntactic_valid")]
+
+
+def _build_synthetic_report(iocs):
+    """Constrói um relatório no formato do extrator a partir de IOCs sintéticos."""
+    return {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "tool": "ioc_extractor",
+        "schema_version": "2.0.0",
+        "summary": {
+            "families_analyzed": 1,
+            "total_iocs": len(iocs),
+            "total_behaviors": 0,
+            "total_evidence": 0,
+            "total_observations": len(iocs),
+        },
+        "families": [
+            {
+                "family": "synthetic",
+                "reference": "tests/fixtures/synthetic_iocs.json",
+                "ioc_count": len(iocs),
+                "behavior_count": 0,
+                "evidence_count": 0,
+                "total_observations": len(iocs),
+                "iocs": [
+                    {
+                        "type": s["type"],
+                        "value": s["value"],
+                        "category": s.get("expected_category", "evidence"),
+                        "source": s.get("source", "synthetic"),
+                        "description": s.get("description", ""),
+                    }
+                    for s in iocs
+                ],
+                "behaviors": [],
+                "evidence": [],
+            }
+        ],
+    }
+
 
 
 class TestFamilies:
@@ -492,21 +567,32 @@ class TestDeduplication:
 # Teste 9 — Consistência JSON x Splunk
 # =====================================================================
 class TestJsonSplunkConsistency:
-    """Verifica que JSON e saída Splunk estão em conformidade."""
+    """Verifica que o JSON e a saída Splunk estão em conformidade."""
 
     def test_splunk_matches_json_iocs(self):
-        """Verifica que linhas Splunk correspondem aos IOCs do JSON."""
-        report = load_report()
-        with open(REPORT_PATH, encoding="utf-8") as fh:
-            report_json = json.load(fh)
-        with open(SPLUNK_PATH, encoding="utf-8") as fh:
-            splunk_content = fh.read().strip()
-        if report_json["summary"]["total_iocs"] > 0:
-            with open(SPLUNK_PATH, encoding="utf-8") as fh:
-                splunk_lines = fh.read().strip().split("\n")
-            assert len(splunk_lines) == report_json["summary"]["total_iocs"], (
-                f"Splunk lines ({len(splunk_lines)}) != JSON iocs ({report_json['summary']['total_iocs']})"
-            )
+        """Verifica consistência JSON x Splunk com IOCs reais do fixture.
+
+        Usa os IOCs sintaticamente válidos de tests/fixtures/synthetic_iocs.json
+        como fonte de comparação, garantindo que a validade do relatório não
+        dependa de arquivos de raiz ignorados pelo .gitignore.
+        """
+        iocs = _valid_synthetic_iocs(CURRENT_REPORT_PATHS["project_dir"])
+        assert len(iocs) >= 1, "Nenhum IOC disponível para comparação (fixture vazio?)"
+
+        report = _build_synthetic_report(iocs)
+        splunk_text = format_splunk(report)
+
+        assert splunk_text.strip(), "Nenhum IOC foi comparado"
+        splunk_lines = splunk_text.strip().split("\n")
+        assert len(splunk_lines) == report["summary"]["total_iocs"], (
+            f"Linhas Splunk ({len(splunk_lines)}) != total_iocs JSON "
+            f"({report['summary']['total_iocs']})"
+        )
+
+    def test_format_all_writes_both_files(self):
+        """--format all grava o JSON e o arquivo de Splunk."""
+        assert CURRENT_REPORT_PATHS["report_path"].is_file(), "Falta o relatório JSON"
+        assert CURRENT_REPORT_PATHS["splunk_path"].is_file(), "Falta o relatório Splunk"
 
 
 # =====================================================================
@@ -601,13 +687,19 @@ class TestSyntheticSamples:
                 # Mesmo valor de fontes diferentes pode estar em múltiplas famílias
 
     def test_json_splunk_consistency(self):
-        """Verifica consistência entre JSON e saída Splunk."""
-        report = load_report()
-        with open(REPORT_PATH, encoding="utf-8") as fh:
-            report_json = json.load(fh)
-        with open(SPLUNK_PATH, encoding="utf-8") as fh:
-            splunk_content = fh.read().strip()
-        if report_json["summary"]["total_iocs"] > 0:
-            with open(SPLUNK_PATH, encoding="utf-8") as fh:
-                splunk_lines = fh.read().strip().split("\n")
-            assert len(splunk_lines) == report_json["summary"]["total_iocs"]
+        """Verifica consistência entre JSON e saída Splunk com IOCs reais."""
+        iocs = _valid_synthetic_iocs(CURRENT_REPORT_PATHS["project_dir"])
+        assert len(iocs) >= 1, "Nenhum IOC disponível para comparação (fixture vazio?)"
+
+        report = _build_synthetic_report(iocs)
+        json_text = format_json(report)
+        splunk_text = format_splunk(report)
+
+        assert json_text.strip(), "Saída JSON vazia"
+        assert splunk_text.strip(), "Saída Splunk vazia"
+
+        splunk_lines = splunk_text.strip().split("\n")
+        assert len(splunk_lines) == report["summary"]["total_iocs"], (
+            f"Linhas Splunk ({len(splunk_lines)}) != total_iocs JSON "
+            f"({report['summary']['total_iocs']})"
+        )
