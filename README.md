@@ -173,3 +173,30 @@ Veja `CONTRIBUTING.md` para contribuir com novas famílias ou melhorias.
 ## 📄 Licença
 
 CC-BY-4.0 — Atribuição necessária.
+
+## Créditos e fontes
+
+### anbeime/skill (upstream)
+- Repositório upstream: https://github.com/anbeime/skill
+- Licença do upstream: **CC-BY-4.0** (Creative Commons Attribution 4.0 International), conforme o badge do próprio repositório.
+- O que veio dele: a estrutura de skills (`skills/<nome>/<nome>/SKILL.md`), o modelo `SKILL.md`, o `report-template.md` e a organização de referências de famílias de malware.
+
+### Contribuição original — Badwolfgang154
+- Ferramentas: `tools/ioc_extractor.py`, `tools/skill_validator.py`, `tools/threatfox_client.py`.
+- Testes: `tests/test_ioc_extractor.py`, `tests/test_threatfox_client.py`.
+- Documentação e descrição do projeto: `README.md`, `README_EN.md`, `USAGE-GUIDE.md`, `API_INTEGRATION.md`, `QUICKSTART.md`, `CONTRIBUTING.md`, `DEPLOYMENT.md`, `DEPLOYMENT_GUIDE.md`, `DEPLOYMENT_CHECKLIST.md`, `SUMMARY.md`, `PROJECT_SUMMARY.md`, `FINAL-SUMMARY.md`, `DEMO-SUCCESS.md`, `README_EN_translated.md`.
+- Esses arquivos não constam no upstream `anbeime/skill`; foram adicionados ou personalizados por Badwolfgang154.
+
+### MITRE ATT&CK
+- Base do mapeamento de técnicas: https://attack.mitre.org
+- As famílias mapeiam comportamentos para técnicas como T1547.001, T1204.002, T1036, T1027, etc.
+
+### ThreatFox / abuse.ch
+- API pública de indicadores de comprometimento (IOCs): https://threatfox.abuse.ch
+- O cliente `tools/threatfox_client.py` consome a API somente para leitura.
+
+### Licença
+- O projeto usa **CC-BY-4.0**.
+- O upstream `anbeime/skill` **indica a licença CC-BY-4.0 em seu README** (não há arquivo LICENSE no repositório).
+- São licenças permissivas e compatíveis; não há conflito.
+
