@@ -14,13 +14,13 @@ Pacote de habilidades de segurança cibernética para análise e classificação
 - **Guias de detecção**: 1 por família
 - **Licença**: CC-BY-4.0
 
-- 🛡️ Sobre o Anbeime
+## 🛡️ Sobre o Anbeime
 
 O Anbeime — Cybersecurity Skills é um projeto de cibersegurança desenvolvido em Python, voltado à análise de ameaças, ao processamento de indicadores de comprometimento (Indicators of Compromise — IOCs) e à organização de informações úteis para atividades de segurança defensiva.
 
 O objetivo é automatizar parte do trabalho de identificação, validação e organização de indicadores, tornando os dados mais estruturados e facilitando seu uso em investigações de segurança.
 
-Como funciona?
+### Como funciona?
 
 O projeto combina referências documentadas sobre famílias de ameaças com recursos de processamento de IOCs.
 
@@ -31,7 +31,7 @@ O projeto combina referências documentadas sobre famílias de ameaças com recu
 - Deduplicação: consolida indicadores repetidos e combina metadados relevantes.
 - Relatórios JSON: organiza os resultados em dados estruturados, incluindo estatísticas e informações sobre as famílias analisadas.
 
-O que são IOCs?
+### O que são IOCs?
 
 Indicadores de comprometimento são artefatos ou valores que podem ajudar a investigar atividades potencialmente maliciosas.
 
@@ -44,7 +44,7 @@ Exemplos incluem:
 
 Um indicador isolado não confirma necessariamente um comprometimento. Os resultados precisam ser interpretados considerando o contexto, a origem e as demais evidências disponíveis.
 
-Aplicação em cibersegurança
+### Aplicação em cibersegurança
 
 O Anbeime foi pensado como um projeto de aprendizado e automação aplicável a conceitos de Blue Team, SOC e Threat Intelligence.
 
@@ -59,7 +59,7 @@ Seu desenvolvimento envolve práticas como:
 
 O projeto não é um SIEM completo nem determina, sozinho, se um sistema foi comprometido. Sua finalidade é ajudar a preparar e organizar informações que possam apoiar análises defensivas.
 
-Estado do desenvolvimento
+### Estado do desenvolvimento
 
 O projeto já conta com um extrator de IOCs, validadores, geração de relatórios e um cliente para a API comunitária da ThreatFox, acompanhado de testes automatizados.
 
@@ -120,6 +120,37 @@ git clone https://github.com/Badwolfgang154/anbeime-cybersecurity-skills.git
 cd anbeime-cybersecurity-skills/skills/cyber-threat-spectrum/cyber-threat-spectrum
 # Leia SKILL.md para começar
 ```
+
+## Como usar
+
+### Clonar e ler a habilidade
+```bash
+git clone https://github.com/Badwolfgang154/anbeime-cybersecurity-skills.git
+cd anbeime-cybersecurity-skills/skills/cyber-threat-spectrum/cyber-threat-spectrum
+# Leia SKILL.md para começar
+```
+
+### Ferramentas (`tools/`)
+```bash
+# Extrai IOCs de todas as famílias (salva ioc_report.json)
+python3 tools/ioc_extractor.py
+
+# Extrai apenas uma família (ex.: ransomware)
+python3 tools/ioc_extractor.py --family ransomware
+
+# Valida a estrutura das skills (requer PyYAML)
+python3 tools/skill_validator.py --validate
+
+# Consulta a ThreatFox (somente leitura; não envia nenhum IOC)
+python3 tools/threatfox_client.py --days 3 --out threatfox.json
+```
+
+### Testes
+```bash
+python3 -m pytest tests/ -v
+```
+
+> **Observação — ThreatFox:** a consulta só funciona com a chave de API disponível em `THREATFOX_AUTH_KEY`. Sem ela, a ferramenta informa o erro em vez de enviar credenciais. Os demais valores de exemplo são placeholders e não são secretos reais.
 
 ## 📖 Habilidades Incluídas
 
