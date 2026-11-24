@@ -29,6 +29,7 @@ PATTERN_TYPE_MAP = {
     "ipv6": ("ipv6", "network"),
     "domain": ("domain", "network"),
     "url": ("url", "network"),
+    "unix_path": ("path", "file"),
     "event_id": ("event_id", "log"),
 }
 EVENT_ID_CONTEXT = re.compile(
@@ -159,6 +160,11 @@ def is_event_id_context(text, start, end):
 
 
 def is_valid_ip(value):
+    if not isinstance(value, str):
+        return False
+    # Zone-index (fe80::1%eth0) não é aceito
+    if "%" in value:
+        return False
     try:
         ipaddress.ip_address(value)
         return True
@@ -186,19 +192,45 @@ def is_valid_url(value):
         return False
     if "//" not in value:
         return False
-    rest = value.split("//", 1)[1]
-    host_port = rest.split("/", 1)[0]
-    if ":" in host_port:
-        host, port = host_port.rsplit(":", 1)
-        if not port.isdigit():
+    try:
+        from urllib.parse import urlsplit
+        from ipaddress import ip_address
+        parsed = urlsplit(value)
+    except (ValueError, TypeError):
+        return False
+    if parsed.scheme not in ("http", "https"):
+        return False
+    if not parsed.netloc:
+        return False
+    # parsed.hostname fornece o host sem os colchetes
+    hostname = parsed.hostname
+    if hostname is None:
+        return False
+    # Validar a porta (se presente)
+    try:
+        port = parsed.port
+    except ValueError:
+        return False
+    if port is not None and not (0 <= port <= 65535):
+        return False
+    # Validar o host
+    if ":" in hostname:
+        # Pode ser IPv6
+        try:
+            ipaddress.ip_address(hostname)
+        except ValueError:
+            return False
+        # IPv6 na URL deve estar entre colchetes
+        if not parsed.netloc.startswith("["):
             return False
     else:
-        host = host_port
-    if not re.match(r"^[A-Za-z0-9.-]+$", host):
-        return False
-    if len(host) > 253:
-        return False
-    return is_valid_domain(host)
+        # IPv4 ou domínio
+        try:
+            ipaddress.ip_address(hostname)
+        except ValueError:
+            if not is_valid_domain(hostname):
+                return False
+    return True
 
 
 def is_valid_event_id(value):
@@ -223,11 +255,16 @@ def register_patterns():
     """Registra padrões de extração (hash, IP, domain, url, path, registry, command, event_id)."""
     pats = {}
     pats["hash"] = re.compile(r"\b([a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})\b")
-    pats["ipv4"] = re.compile(r"\b((?:[0-9]{1,3}\.){3}[0-9]{1,3})\b")
-    pats["ipv6"] = re.compile(r"\b([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b|\[?([A-Fa-f0-9:]+)\]")
+    # IPv4: negative lookahead evita extração parcial (ex.: 1.2.3.4.5 nao extrai 1.2.3.4)
+    pats["ipv4"] = re.compile(r"(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?![\d.])")
+    # IPv6: candidate IPv6 address (with or without brackets).
+    # Balanced brackets checked in extraction; brackets stripped from the value.
+    pats["ipv6"] = re.compile(r"(\[?)([A-Fa-f0-9:]+)(\]?)")
     pats["domain"] = re.compile(r"\b((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,})\b")
-    pats["url"] = re.compile(r"\b(https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(/[^\s]*)?\b")
-    pats["path"] = re.compile(r"(?<![a-zA-Z]):([\\/][^\s<>:\"|?*]*)")
+    # URL: aceita dominio, IPv4 e IPv6 entre colchetes como host
+    pats["url"] = re.compile(r"\b(https?://[^\s<>]*)\b")
+    pats["path"] = re.compile(r"(?<![A-Za-z0-9])([A-Za-z]:[\\/][^\s<>:|?*]*)")
+    pats["unix_path"] = re.compile(r"(?<![A-Za-z0-9])/([^\s<>:|?*]+)")
     pats["registry"] = re.compile(r"HKLM|HKCU|HKCR|HKEY_[A-Z]+")
     pats["command"] = re.compile(r"(\b(?:cmd|powershell|net|reg|sc|winrm|WMIC)\b.+)", re.IGNORECASE)
     pats["event_id"] = re.compile(r"\b(\d{2,5})\b")
@@ -415,13 +452,40 @@ def extract_iocs_from_ref(ref_path):
 
     # 1) Padrões: hashes, IPs, domínios, caminhos, event_ids
     for pattern_name, pattern in PATTERNS.items():
-        if pattern_name in ("path", "registry", "command", "event_id"):
+        if pattern_name in ("path", "unix_path", "registry", "command", "event_id"):
             continue
         ioc_type, ioc_category = PATTERN_TYPE_MAP[pattern_name]
         for match in pattern.finditer(text):
             value = match.group(1).strip()
+            if pattern_name == "url" and not is_valid_url(value):
+                continue
             if pattern_name == "domain" and not is_valid_domain(value):
                 continue
+            # Validate IPv4/IPv6 antes de criar o registro
+            if pattern_name == "ipv4" and not is_valid_ip(value):
+                continue
+            if pattern_name == "ipv6":
+                value = match.group(2).strip()
+                # Verificar balanceamento de colchetes
+                if bool(match.group(1)) != bool(match.group(3)):
+                    continue  # colchetes sem correspondência
+                # Rejeitar zone-index (fe80::1%eth0) - verificar se há % depois do endereço
+                rest = text[match.end():match.end() + 10]
+                if rest.startswith("%"):
+                    continue
+                if pattern_name == "ipv6" and not is_valid_ip(value):
+                    continue
+            # Classificar hashes por comprimento
+            if pattern_name == "hash":
+                length = len(value)
+                if length == 32:
+                    ioc_type, ioc_category = "md5", "file"
+                elif length == 40:
+                    ioc_type, ioc_category = "sha1", "file"
+                elif length == 64:
+                    ioc_type, ioc_category = "sha256", "file"
+                else:
+                    continue
             iocs.append({
                 "type": ioc_type,
                 "value": value,
@@ -444,16 +508,32 @@ def extract_iocs_from_ref(ref_path):
             })
 
     # 2) Caminhos
-    for match in PATTERNS["path"].finditer(text):
-        path = match.group(1).strip()
-        if is_valid_path(path):
-            iocs.append({
-                "type": "path",
-                "value": path,
-                "category": "file",
-                "source": family,
-                "description": "Caminho de arquivo/diretório detectado na descrição",
-            })
+    # Registrar os intervalos completos das URLs para evitar IOCs de path internos.
+    url_spans = [
+        match.span()
+        for match in PATTERNS["url"].finditer(text)
+    ]
+
+    for pattern_name in ("path", "unix_path"):
+        for match in PATTERNS[pattern_name].finditer(text):
+            path = match.group(1).strip()
+            match_start, match_end = match.span()
+
+            # Excluir qualquer candidato que se sobreponha a uma URL.
+            if any(
+                match_start < url_end and url_start < match_end
+                for url_start, url_end in url_spans
+            ):
+                continue
+
+            if is_valid_path(path):
+                iocs.append({
+                    "type": "path",
+                    "value": path,
+                    "category": "file",
+                    "source": family,
+                    "description": "Caminho de arquivo/diretório detectado na descrição",
+                })
 
     # 3) IOCs e comportamentos conhecidos via mapeamento
     fam_map = KNOWN_IOCS.get(family, KNOWN_IOCS["default"])
@@ -470,7 +550,11 @@ def extract_iocs_from_ref(ref_path):
 
     # Processar IOCs
     for ioc in iocs:
-        key = (ioc["type"], normalize_value(ioc["value"], ioc["type"]), ioc["source"])
+        try:
+            normalized = normalize_value(ioc["value"], ioc["type"])
+        except (ValueError, TypeError):
+            continue
+        key = (ioc["type"], normalized, ioc["source"])
         if key not in seen:
             seen.add(key)
             iocs_list.append(ioc)
